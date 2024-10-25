@@ -20,7 +20,7 @@ TOKEN = load_token()
 
 # If token is None, fallback to environment variable
 if not TOKEN:
-    TOKEN = os.getenv("TOKEN")
+    TOKEN = os.getenv("token")
 
 # Check if we successfully retrieved a token
 if not TOKEN:
