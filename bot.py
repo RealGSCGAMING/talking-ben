@@ -4,6 +4,8 @@ import discord
 from discord.ext import commands
 import random
 import asyncio
+from flask import Flask, jsonify
+from threading import Thread
 
 # Load token function
 def load_token():
@@ -38,6 +40,20 @@ SOUNDS = {
 default_channel = None
 permission_level = 0
 restricted_role = None
+
+# Flask setup
+app = Flask(__name__)
+
+@app.route('/')
+def index():
+    return jsonify(status="Bot is running", latency=f"{round(bot.latency * 1000)}ms" if bot.is_ready() else "N/A")
+
+def run_flask():
+    app.run(host="0.0.0.0", port=5000)
+
+# Start Flask in a separate thread
+flask_thread = Thread(target=run_flask)
+flask_thread.start()
 
 # Role and preset commands
 @bot.command(name="preset")
