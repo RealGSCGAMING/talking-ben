@@ -2,6 +2,9 @@ import os
 import json
 import discord
 from discord.ext import commands
+import random
+from datetime import timedelta  # Import timedelta from datetime
+import asyncio  # Import asyncio for sleep functionality
 
 # Function to load the token from config.json
 def load_token():
@@ -23,8 +26,12 @@ if not TOKEN:
 if not TOKEN:
     raise ValueError("No token found in config.json or environment variable.")
 
-# Set up the bot with the new prefix
-bot = commands.Bot(command_prefix="b!")
+# Set up intents
+intents = discord.Intents.all()
+intents.voice_states = True  # Needed to join and leave voice channels
+
+# Set up the bot with the new prefix and intents
+bot = commands.Bot(command_prefix="b.", intents=intents)
 
 # Path to sound files
 SOUNDS = {
@@ -41,7 +48,6 @@ async def join(ctx, *, channel_name: str):
     """Joins a voice channel."""
     channel = discord.utils.get(ctx.guild.voice_channels, name=channel_name)
 
-    # If channel is found by name
     if channel:
         await channel.connect()
         ctx.guild.voice_client.play(discord.FFmpegPCMAudio(SOUNDS["arrive"]))
@@ -53,9 +59,15 @@ async def join(ctx, *, channel_name: str):
 async def leave(ctx):
     """Leaves the voice channel."""
     if ctx.guild.voice_client:
+        # Play the leave sound
+        ctx.guild.voice_client.play(discord.FFmpegPCMAudio(SOUNDS["leave"]))
+
+        # Wait for the sound to finish before disconnecting
+        while ctx.guild.voice_client.is_playing():
+            await asyncio.sleep(1)  # Wait for 1 second
+
         await ctx.guild.voice_client.disconnect()
         await ctx.send("Left the voice channel.")
-        ctx.guild.voice_client.play(discord.FFmpegPCMAudio(SOUNDS["leave"]))
     else:
         await ctx.send("I'm not in a voice channel.")
 
@@ -63,8 +75,7 @@ async def leave(ctx):
 async def ask(ctx, *, question: str):
     """Asks Ben a question."""
     if ctx.guild.voice_client:
-        # Play a random sound based on the question (this is a placeholder logic)
-        response = random.choice(["yes", "no", "laugh", "ugh"])  # Replace with your logic
+        response = random.choice(["yes", "no", "laugh", "ugh"])  # Placeholder logic
         ctx.guild.voice_client.play(discord.FFmpegPCMAudio(SOUNDS[response]))
         await ctx.send(f"Ben says: {response.capitalize()}")
     else:
