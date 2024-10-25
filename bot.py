@@ -179,6 +179,11 @@ async def commands(ctx):
     ]
     await ctx.send("\n".join(command_descriptions))
 
+@bot.command(name="ping")
+async def ping(ctx):
+    """Checks the bot's ping time."""
+    latency = round(bot.latency * 1000)  # Convert to milliseconds
+    await ctx.send(f"Pong! Latency is {latency}ms")
 
 # Run the bot
 bot.run(TOKEN)
