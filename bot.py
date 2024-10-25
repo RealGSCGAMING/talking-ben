@@ -70,7 +70,7 @@ async def join(ctx, *, channel_name: str = None):
 
     # Check if the bot is already in a voice channel
     if ctx.guild.voice_client:
-        await ctx.send("Ben is already in a voice channel.")
+        await ctx.send("I'm already in a voice channel.")
         return
 
     channel = discord.utils.get(ctx.guild.voice_channels, name=channel_name)
@@ -103,14 +103,19 @@ async def leave(ctx):
 
 @bot.command(name="ask")
 async def ask(ctx, *, question: str):
-    """Asks Ben a question."""
+    """Asks Ben a question. Replies directly to the user, with audio if in a voice channel."""
+    response = random.choice(["yes", "no", "laugh", "ugh"])  # Placeholder logic
+
+    # Check if the bot is in a voice channel
     if ctx.guild.voice_client:
-        response = random.choice(["yes", "no", "laugh", "ugh"])  # Placeholder logic
+        # Play the response sound if connected to a voice channel
         ctx.guild.voice_client.play(discord.FFmpegPCMAudio(SOUNDS[response]))
-        await ctx.send(f"Ben says: {response.capitalize()}")
-        await reset_inactivity_timer(ctx)  # Reset timer on ask
-    else:
-        await ctx.send("The bot needs to be in a voice channel first! (Use b.join [channel])")
+
+    # Reply to the user with the response text
+    await ctx.reply(f"Ben says: {response.capitalize()}", mention_author=True)
+    
+    # Reset the inactivity timer since a command was used
+    await reset_inactivity_timer(ctx)
 
 @bot.command(name="ping")
 async def ping(ctx):
