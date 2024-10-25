@@ -165,5 +165,20 @@ async def ask(ctx, *, question: str):
     if ctx.guild.voice_client:
         ctx.guild.voice_client.play(discord.FFmpegPCMAudio(SOUNDS[response]))
 
+@bot.command(name="commands")
+async def commands(ctx):
+    """Lists all commands with their syntax and descriptions."""
+    command_descriptions = [
+        "**b.commands** - Shows a list of all commands and their syntax.",
+        "**b.join [channel name/ID]** - Joins the specified voice channel. If no channel is specified, joins the preset channel if one is set.",
+        "**b.leave** - Leaves the current voice channel.",
+        "**b.ask [question]** - Asks Ben a question. If Ben is in a voice channel, he will play a response.",
+        "**b.preset [channel name/ID/off]** - Sets a default voice channel for Ben to join with `b.join`. Use 'off' to remove the preset.",
+        "**b.role [level (0/1/2)] [role name/ID]** - Sets role-based permissions for bot commands. Level 0 locks `b.role` and `b.preset`; level 1 adds `b.join` and `b.leave`; level 2 locks all commands.",
+        "**b.ping** - Checks the bot's latency.",
+    ]
+    await ctx.send("\n".join(command_descriptions))
+
+
 # Run the bot
 bot.run(TOKEN)
