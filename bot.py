@@ -50,7 +50,6 @@ async def reset_inactivity_timer(ctx):
     if inactive_timer is not None:
         inactive_timer.cancel()
     inactive_timer = bot.loop.create_task(asyncio.sleep(300))  # 5 minutes
-    await inactive_timer
 
 @bot.event
 async def on_command(ctx):
@@ -58,9 +57,20 @@ async def on_command(ctx):
     await reset_inactivity_timer(ctx)
 
 @bot.command(name="join")
-async def join(ctx, *, channel_name: str):
+async def join(ctx, *, channel_name: str = None):
     """Joins a voice channel."""
     global inactive_timer
+
+    # Check if a channel name was provided
+    if channel_name is None:
+        await ctx.send("You need to provide a channel name! Use b.join [channel]")
+        return
+
+    # Check if the bot is already in a voice channel
+    if ctx.guild.voice_client:
+        await ctx.send("Ben is already in a voice channel.")
+        return
+
     channel = discord.utils.get(ctx.guild.voice_channels, name=channel_name)
 
     if channel:
@@ -132,8 +142,10 @@ async def inactivity_check():
                     await guild.text_channels[0].send("Ben disconnected due to inactivity.")
             inactive_timer = None  # Reset the timer
 
-# Start the inactivity check loop
-bot.loop.create_task(inactivity_check())
+@bot.before_invoke
+async def before_invoke(ctx):
+    """Set up the inactivity check before any command is invoked."""
+    bot.loop.create_task(inactivity_check())
 
 # Run the bot
 bot.run(TOKEN)
