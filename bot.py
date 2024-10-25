@@ -3,7 +3,9 @@ import json
 import discord
 from discord.ext import commands
 import random
-import asyncio  # Import asyncio for sleep functionality
+import asyncio
+from flask import Flask
+from threading import Thread
 
 # Function to load the token from config.json
 def load_token():
@@ -146,6 +148,22 @@ async def inactivity_check():
 async def before_invoke(ctx):
     """Set up the inactivity check before any command is invoked."""
     bot.loop.create_task(inactivity_check())
+
+# Set up the Flask app
+app = Flask(__name__)
+
+@app.route('/')
+def home():
+    return "Bot is running!"
+
+# Function to run the Flask app
+def run_web_server():
+    port = int(os.environ.get("PORT", 5000))  # Render provides a PORT env variable
+    app.run(host="0.0.0.0", port=port)
+
+# Start the web server in a separate thread
+web_thread = Thread(target=run_web_server)
+web_thread.start()
 
 # Run the bot
 bot.run(TOKEN)
