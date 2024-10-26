@@ -81,8 +81,8 @@ async def leave(ctx):
 async def ask(ctx, *, question: str):
     """Asks Ben a question."""
 
-    if random.randint(1, 2) == 1:
-        special_response = "from the screen :desktop: to the ring :ring: to the pen :pen_ballpoint: to the king :prince:(:crossed_swords:) wheres my crown :crown: thats my bling :gem: always trouble when i reign :punch::smiling_imp:"
+    if random.randint(1, 100) == 1:
+        special_response = "From the screen 💻 to the ring 💍 to the PEN 🖊️ to the king 🤴 wheres my crown 👑 thats my bling 💎 always trouble when i reign"
         await ctx.reply(f"Ben says: {special_response}")
 
         if ctx.guild.voice_client:
@@ -116,7 +116,7 @@ async def ping(ctx):
 @bot.command(name="aski")
 async def aski(ctx):
     """I'm in the thick of it, everybody knows..."""
-    special_response = "from the screen :desktop: to the ring :ring: to the pen :pen_ballpoint: to the king :prince:(:crossed_swords:) wheres my crown :crown: thats my bling :gem: always trouble when i reign :punch::smiling_imp:"
+    special_response = "From the screen 💻 to the ring 💍 to the PEN 🖊️ to the king 🤴 wheres my crown 👑 thats my bling 💎 always trouble when i reign"
     await ctx.reply(f"Ben says: {special_response}")
 
     if ctx.guild.voice_client:
