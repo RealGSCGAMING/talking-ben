@@ -34,7 +34,8 @@ SOUNDS = {
     "yes": "Sounds/Yes.mp3",
     "no": "Sounds/No.mp3",
     "laugh": "Sounds/Laugh.mp3",
-    "ugh": "Sounds/Ugh.mp3"
+    "ugh": "Sounds/Ugh.mp3",
+    "ksi": "Sounds/KSI.mp3"
 }
 
 # Global variables for presets and permissions
@@ -159,6 +160,17 @@ async def ask(ctx, *, question: str):
     if not await has_permission(ctx, level=2):
         return
 
+    # Determine if the 1% special response should occur
+    if random.randint(1, 100) == 1:
+        special_response = "From the screen 💻 to the ring 💍 to the PEN 🖊️ to the king 🤴 wheres my crown 👑 thats my bling 💎 always trouble when i reign"
+        await ctx.reply(f"Ben says: {special_response}")
+
+        # Play the special response if in a voice channel
+        if ctx.guild.voice_client:
+            ctx.guild.voice_client.play(discord.FFmpegPCMAudio(SOUNDS["ksi"]))
+        return
+
+    # Regular response selection
     response = random.choice(["yes", "no", "laugh", "ugh"])
     await ctx.reply(f"Ben says: {response.capitalize()}")
 
@@ -185,6 +197,17 @@ async def ping(ctx):
     """Checks the bot's ping time."""
     latency = round(bot.latency * 1000)  # Convert to milliseconds
     await ctx.send(f"Pong! Latency is {latency}ms")
+
+@bot.command(name="aski")
+async def aski(ctx):
+    """Triggers the KSI event with a special response and audio."""
+    special_response = "From the screen 💻 to the ring 💍 to the PEN 🖊️ to the king 🤴 wheres my crown 👑 thats my bling 💎 always trouble when i reign"
+    await ctx.reply(f"Ben says: {special_response}")
+
+    # Play KSI audio if bot is in a voice channel
+    if ctx.guild.voice_client:
+        ctx.guild.voice_client.play(discord.FFmpegPCMAudio("KSI.mp3"))
+
 
 # Run the bot
 bot.run(TOKEN)
