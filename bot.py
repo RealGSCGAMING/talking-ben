@@ -41,7 +41,7 @@ app = Flask(__name__)
 
 @app.route('/')
 def home():
-    return "Bot is running!"
+    return send_from_directory(os.getcwd(), "botsite.html")
 
 def run_flask():
     app.run(host="0.0.0.0", port=5000)
