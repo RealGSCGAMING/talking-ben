@@ -1,6 +1,6 @@
 # Talking Ben Bot
 
-An easy to use Talking Ben Discord bot that replies both in text chat and voice channels.
+An easy to use Talking Ben Discord bot that replies in both text and voice channels.
 
 ## How to Use:
 1. Fork this repository
