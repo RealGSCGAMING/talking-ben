@@ -41,7 +41,7 @@ app = Flask(__name__)
 
 @app.route('/')
 def home():
-    return send_from_directory(os.getcwd(), "botsite.html")
+    return "Bot is running!"
 
 def run_flask():
     app.run(host="0.0.0.0", port=5000)
@@ -82,7 +82,7 @@ async def ask(ctx, *, question: str):
     """Asks Ben a question."""
 
     if random.randint(1, 100) == 1:
-        special_response = "From the screen 💻 to the ring 💍 to the PEN 🖊️ to the king 🤴 wheres my crown 👑 thats my bling 💎 always trouble when i reign"
+        special_response = "from the screen 🖥️ to the ring 💍 to the pen 🖊️ to the king 🤴(⚔️) wheres my crown 👑 thats my bling 💎 always trouble when i reign 👊😈"
         await ctx.reply(f"Ben says: {special_response}")
 
         if ctx.guild.voice_client:
@@ -116,7 +116,7 @@ async def ping(ctx):
 @bot.command(name="aski")
 async def aski(ctx):
     """I'm in the thick of it, everybody knows..."""
-    special_response = "From the screen 💻 to the ring 💍 to the PEN 🖊️ to the king 🤴 wheres my crown 👑 thats my bling 💎 always trouble when i reign"
+    special_response = "from the screen 🖥️ to the ring 💍 to the pen 🖊️ to the king 🤴(⚔️) wheres my crown 👑 thats my bling 💎 always trouble when i reign 👊😈"
     await ctx.reply(f"Ben says: {special_response}")
 
     if ctx.guild.voice_client:
