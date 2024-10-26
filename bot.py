@@ -206,7 +206,7 @@ async def aski(ctx):
 
     # Play KSI audio if bot is in a voice channel
     if ctx.guild.voice_client:
-        ctx.guild.voice_client.play(discord.FFmpegPCMAudio("KSI.mp3"))
+        ctx.guild.voice_client.play(discord.FFmpegPCMAudio(SOUNDS["ksi"]))
 
 
 # Run the bot
