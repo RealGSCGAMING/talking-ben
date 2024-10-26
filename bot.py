@@ -4,8 +4,9 @@ import discord
 from discord.ext import commands
 import random
 import asyncio
-from flask import Flask, jsonify
+from flask import Flask, jsonify, render_template_string
 from threading import Thread
+import threading
 
 # Load token function
 def load_token():
@@ -41,19 +42,93 @@ default_channel = None
 permission_level = 0
 restricted_role = None
 
-# Flask setup
 app = Flask(__name__)
 
+# HTML content to be displayed at the root URL
+html_content = """
+<!DOCTYPE html>
+<html>
+  <head>
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        text-align: center;
+        background-color: #c7853e;
+        transition: background-color 0.3s;
+        display: flex;
+        flex-direction: row;
+        justify-content: space-between;
+        height: 100vh;
+        margin: 0;
+      }
+
+      #mainContent {
+        flex-grow: 1;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        position: relative;
+      }
+
+      #paddedTitle,
+      #paddedBody {
+        padding: 20px 40px;
+        border-radius: 25px;
+        background-color: white;
+        color: black;
+        border: 2px solid black;
+        margin-top: 10px;
+        margin-left: 5px;
+        margin-right: 5px;
+      }
+
+      #paddedTitle {
+        font-size: 2em;
+      }
+
+      #paddedBody {
+        font-size: 1em;
+      }
+
+      #paddedButton {
+        font-size: 2em;
+        padding: 20px 40px;
+        border-radius: 25px;
+        background-color: white;
+        color: black;
+        border: 2px solid black;
+        cursor: pointer;
+        margin-top: 10px;
+        margin-left: 5px;
+        margin-right: 5px;
+        transition: transform 0.1s
+      }
+
+      #paddedButton:hover {
+        transform: scale(1.05);
+      }
+    </style>
+  </head>
+  <body>
+    <div id="mainContent">
+      <div id="paddedTitle">Ben is online! <p style="font-size: 0.5em">You can return to Discord now.</p>
+      </div>
+    </div>
+  </body>
+</html>
+"""
+
 @app.route('/')
-def index():
-    return jsonify(status="Bot is running", latency=f"{round(bot.latency * 1000)}ms" if bot.is_ready() else "N/A")
+def home():
+    # Render the HTML content as a response to the root URL
+    return render_template_string(html_content)
 
 def run_flask():
     app.run(host="0.0.0.0", port=5000)
 
-# Start Flask in a separate thread
-flask_thread = Thread(target=run_flask)
-flask_thread.start()
+# Start Flask in a separate thread to run alongside the bot
+threading.Thread(target=run_flask).start()
 
 # Role and preset commands
 @bot.command(name="preset")
