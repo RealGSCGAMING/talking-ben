@@ -7,6 +7,8 @@ import asyncio
 from flask import Flask, jsonify, render_template_string, send_from_directory
 from threading import Thread
 import threading
+from gtts import gTTS
+import tempfile
 
 def load_token():
     try:
@@ -77,23 +79,34 @@ async def leave(ctx):
     else:
         await ctx.send("I'm not in a voice channel.")
 
+from gtts import gTTS
+import tempfile
+
 @bot.command(name="ask")
 async def ask(ctx, *, question: str):
     """Asks Ben a question."""
 
-    if random.randint(1, 100) == 1:
-        special_response = "from the screen 🖥️ to the ring 💍 to the pen 🖊️ to the king 🤴(⚔️) wheres my crown 👑 thats my bling 💎 always trouble when i reign 👊😈"
-        await ctx.reply(f"Ben says: {special_response}")
+    user_nickname = ctx.author.display_name
+    tts_text = f"{user_nickname} asked: {question}"
 
-        if ctx.guild.voice_client:
-            ctx.guild.voice_client.play(discord.FFmpegPCMAudio(SOUNDS["ksi"]))
-        return
-
+    # Generate TTS audio using gtts
+    with tempfile.NamedTemporaryFile(delete=False, suffix=".mp3") as tts_audio:
+        tts = gTTS(tts_text, lang='en')
+        tts.save(tts_audio.name)
+    
+    # Choose a response audio file
     response = random.choice(["yes", "no", "laugh", "ugh"])
-    await ctx.reply(f"Ben says: {response.capitalize()}")
+    response_audio_path = SOUNDS[response]
 
+    # Play TTS message first, then response audio
     if ctx.guild.voice_client:
-        ctx.guild.voice_client.play(discord.FFmpegPCMAudio(SOUNDS[response]))
+        ctx.guild.voice_client.play(discord.FFmpegPCMAudio(tts_audio.name), 
+                                    after=lambda e: ctx.guild.voice_client.play(discord.FFmpegPCMAudio(response_audio_path)))
+        await ctx.reply(f"Ben says: {response.capitalize()}")
+
+    # Clean up TTS audio file after it's used
+    os.remove(tts_audio.name)
+
 
 @bot.command(name="commands")
 async def commands(ctx):
