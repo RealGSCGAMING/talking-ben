@@ -36,6 +36,10 @@ SOUNDS = {
     "ksi": "Sounds/KSI.mp3"
 }
 
+@bot.event
+async def on_ready():   
+    print(f"(!) - Logged in as {bot.user}")
+
 # Bot commands
 @bot.command(name="join")
 async def join(ctx, *, channel_name: str = None):
@@ -49,6 +53,7 @@ async def join(ctx, *, channel_name: str = None):
         await channel.connect()
         ctx.guild.voice_client.play(discord.FFmpegPCMAudio(SOUNDS["arrive"]))
         await ctx.send(f"Joined {channel.name}!")
+        print(f"(!) - Joined channel: {channel.name}")
     else:
         await ctx.send("Please provide a valid channel name or ID.")
 
@@ -62,6 +67,7 @@ async def leave(ctx):
             await asyncio.sleep(1)
         await voice_client.disconnect()
         await ctx.send("Left the voice channel.")
+        print(f"(!) - Left channel")
     else:
         await ctx.send("I'm not in a voice channel.")
 
@@ -71,21 +77,40 @@ async def ask(ctx, *, question: str):
     user_nickname = ctx.author.display_name
     tts_text = f"{user_nickname} asked: {question}"
 
+    # Generate TTS audio
     with tempfile.NamedTemporaryFile(delete=False, suffix=".mp3") as tts_audio:
         gTTS(tts_text, lang='en').save(tts_audio.name)
-    
-    response_audio_path = SOUNDS[random.choice(["yes", "no", "laugh", "ugh"])]
+        tts_filename = tts_audio.name
 
-    if ctx.guild.voice_client:
+    response = random.choice(["yes", "no", "laugh", "ugh"])
+    response_audio_path = SOUNDS[response]
+
+    voice_client = ctx.guild.voice_client
+    if voice_client:
+        def cleanup(_):
+            # Safely delete the file after playback finishes
+            try:
+                os.remove(tts_filename)
+            except Exception as e:
+                print(f"Error deleting TTS file: {e}")
+
         def play_response(_):
-            ctx.guild.voice_client.play(discord.FFmpegPCMAudio(response_audio_path))
+            # Play the response sound after TTS
+            voice_client.play(
+                discord.FFmpegPCMAudio(response_audio_path),
+                after=cleanup
+            )
 
-        ctx.guild.voice_client.play(
-            discord.FFmpegPCMAudio(tts_audio.name), after=play_response
+        voice_client.play(
+            discord.FFmpegPCMAudio(tts_filename),
+            after=play_response
         )
-        await ctx.reply("Ben responded!")
 
-    os.remove(tts_audio.name)
+        await ctx.reply(f"Ben says: {response.capitalize()}")
+        print(f"(!) - {user_nickname} asked: {question}")
+        print(f"(!) - Response: {response.capitalize()}")
+
+
 
 @bot.command(name="commands")
 async def commands_list(ctx):
@@ -113,6 +138,7 @@ async def aski(ctx):
         "wheres my crown 👑 thats my bling 💎 always trouble when i reign 👊😈"
     )
     await ctx.reply(f"Ben says: {special_response}")
+    print(f"(!) - Played KSI response")
 
     if ctx.guild.voice_client:
         ctx.guild.voice_client.play(discord.FFmpegPCMAudio(SOUNDS["ksi"]))
