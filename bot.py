@@ -236,9 +236,9 @@ async def commands_list(ctx):
         "**b.commands** - Shows this list of commands.",
         "**b.join [channel name/ID]** - Joins the specified voice channel.",
         "**b.leave** - Leaves the current voice channel.",
-        "**b.ask [question]** - Asks Ben a question with audio response."
+        "**b.ask [question]** - Asks Ben a question with audio response.",
         "**b.settings** - Allows server managers to change bot settings.",
-        "**b.ping** - Checks the bot's latency.",
+        "**b.ping** - Checks the bot's latency."
     ]
     await ctx.send("\n".join(command_descriptions))
 
