@@ -114,6 +114,7 @@ async def settings(ctx, setting: str = None, value: str = None):
             settings_state[setting_name] = value.lower() == "true"
             save_settings()
             apply_settings()
+            print(f"(!) - {setting_name} is now {'Enabled' if settings_state[setting_name] else 'Disabled'}.")
             msg = await ctx.send(f"{setting_name} is now {'Enabled' if settings_state[setting_name] else 'Disabled'}.")
             await asyncio.sleep(3)
             await msg.delete()
