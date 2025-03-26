@@ -7,7 +7,7 @@ import asyncio
 from gtts import gTTS
 import tempfile
 
-# Load the bot token
+
 def load_token():
     try:
         with open("config.json") as config_file:
@@ -20,7 +20,7 @@ TOKEN = load_token() or os.getenv("token")
 if not TOKEN:
     raise ValueError("No token found in config.json or environment variable.")
 
-# Set up bot intents and instance
+
 intents = discord.Intents.all()
 intents.voice_states = True
 bot = commands.Bot(command_prefix="b.", intents=intents)
@@ -48,7 +48,7 @@ def save_settings():
     with open("settings.json", "w") as file:
         json.dump(settings_state, file, indent=4)
 
-def apply_settings():  # Updates global variables to match settings_state
+def apply_settings():
     global text_to_speech, easter_egg, restrict_joining, restrict_speaking
     text_to_speech = settings_state["Text To Speech"]
     easter_egg = settings_state["Easter Egg"]
@@ -56,7 +56,7 @@ def apply_settings():  # Updates global variables to match settings_state
     restrict_speaking = settings_state["Restrict Speaking"]
 
 settings_state = load_settings()
-apply_settings()  # Apply settings on startup
+apply_settings()
 
 def get_settings_options():
     return [
@@ -83,14 +83,13 @@ class SettingsDropdown(discord.ui.Select):
             await interaction.response.send_message("This menu is not for you.", ephemeral=True)
             return
 
-        setting_name = self.values[0].split(" - ")[0]  # Extract the setting name
+        setting_name = self.values[0].split(" - ")[0]
         if setting_name in settings_state:
-            settings_state[setting_name] = not settings_state[setting_name]  # Toggle setting
-            save_settings()  # Save changes to file
-            apply_settings()  # Update global variables
+            settings_state[setting_name] = not settings_state[setting_name]
+            save_settings()
+            apply_settings()
             await interaction.response.send_message(f"{setting_name} is now {'Enabled' if settings_state[setting_name] else 'Disabled'}.", ephemeral=True)
             
-            # Update dropdown
             self.view.clear_items()
             self.view.add_item(SettingsDropdown(self.author))
             await interaction.message.edit(view=self.view)
@@ -131,7 +130,6 @@ async def settings_error(ctx, error):
 
 
 
-# Predefined sound effects
 SOUNDS = {
     "arrive": "Sounds/Arrive.mp3",
     "leave": "Sounds/Leave.mp3",
@@ -146,7 +144,8 @@ SOUNDS = {
 async def on_ready():   
     print(f"(!) - Logged in as {bot.user}")
 
-# Bot commands
+
+
 @bot.command(name="join")
 async def join(ctx, *, channel_name: str = None):
     """Joins a voice channel."""
@@ -197,7 +196,7 @@ async def ask(ctx, *, question: str):
     voice_client = ctx.guild.voice_client
     if voice_client:
         def cleanup(_):
-            # Safely delete the TTS file after playback finishes (if it was created)
+            
             if text_to_speech:
                 try:
                     os.remove(tts_filename)
@@ -205,24 +204,24 @@ async def ask(ctx, *, question: str):
                     print(f"Error deleting TTS file: {e}")
 
         def play_response(_):
-            # Play the response sound after TTS (or immediately if TTS is disabled)
+            
             voice_client.play(
                 discord.FFmpegPCMAudio(response_audio_path),
-                after=None  # No need to chain further actions
+                after=None
             )
 
         if text_to_speech:
-            # Generate TTS audio
+            
             with tempfile.NamedTemporaryFile(delete=False, suffix=".mp3") as tts_audio:
                 gTTS(tts_text, lang='en').save(tts_audio.name)
                 tts_filename = tts_audio.name
 
             voice_client.play(
                 discord.FFmpegPCMAudio(tts_filename),
-                after=play_response  # Play response after TTS
+                after=play_response
             )
         else:
-            play_response(None)  # Immediately play response if TTS is disabled
+            play_response(None)
 
         await ctx.reply(f"Ben says: {response.capitalize()}")
         print(f"(!) - {user_nickname} asked: {question}")
@@ -266,5 +265,5 @@ async def aski(ctx):
         ctx.guild.voice_client.play(discord.FFmpegPCMAudio(SOUNDS["ksi"]))
 
 
-# Run the bot
+
 bot.run(TOKEN)
