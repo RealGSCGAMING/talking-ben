@@ -217,9 +217,15 @@ async def ask(ctx, *, question: str):
                 tts_filename = tts_audio.name
 
             voice_client.play(
-                discord.FFmpegPCMAudio(tts_filename),
-                after=play_response
-            )
+    discord.FFmpegPCMAudio(
+        tts_filename 
+        #, options="-filter:a 'asetrate=44100*1.05,atempo=1.0'"
+        # first number after 40000: pitch | second number: speed
+    ),
+    after=play_response
+)
+
+
         else:
             play_response(None)
 
