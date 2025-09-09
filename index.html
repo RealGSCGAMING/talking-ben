@@ -5,12 +5,8 @@
         font-family: Arial, sans-serif;
         text-align: center;
         background-color: #c7853e;
-        transition: background-color 0.3s;
         display: flex;
-        flex-direction: row;
-        justify-content: space-between;
         height: 100vh;
-        margin: 0;
       }
 
       #mainContent {
@@ -19,7 +15,6 @@
         flex-direction: column;
         justify-content: center;
         align-items: center;
-        position: relative;
       }
 
       #paddedTitle,
@@ -27,19 +22,12 @@
         padding: 20px 40px;
         border-radius: 25px;
         background-color: white;
-        color: black;
         border: 2px solid black;
         margin-top: 10px;
-        margin-left: 5px;
-        margin-right: 5px;
       }
 
       #paddedTitle {
         font-size: 2em;
-      }
-
-      #paddedBody {
-        font-size: 1em;
       }
 
       #paddedButton {
@@ -47,12 +35,9 @@
         padding: 20px 40px;
         border-radius: 25px;
         background-color: white;
-        color: black;
         border: 2px solid black;
         cursor: pointer;
         margin-top: 10px;
-        margin-left: 5px;
-        margin-right: 5px;
         transition: transform 0.1s
       }
 
@@ -64,21 +49,16 @@
   <body>
     <div id="mainContent">
       <div id="paddedTitle">Talking Ben Bot</div>
-      <div id="paddedBody">Coded by @gscgaming <br>
-        <br>Supports text and audio responses using voice channels. <br>
-        <br>Enjoy!
-      </div>
-    </div>
-    <div id="mainContent">
-      <a href="https://google.com/">
-        <button id="paddedButton" disabled>Video Tutorial [WIP]</button>
+      <a href="https://www.youtube.com/watch?v=Qa9Mj-qEtwk">
+        <button id="paddedButton" style="background-color: coral;">Tutorial</button>
+      </a>
+      <a href="https://github.com/RealGSCGAMING/talking-ben/releases">
+        <button id="paddedButton" style="background-color: lightgreen;">Download</button>
       </a>
       <a href="https://github.com/RealGSCGAMING/talking-ben">
         <button id="paddedButton">Source Code</button>
       </a>
-      <a href="help.html">
-        <button id="paddedButton" disabled>Help [WIP]</button>
-      </a>
+      <div id="paddedBody" style="background-color: gold;">Made by banana man</div>
     </div>
   </body>
 </html>
