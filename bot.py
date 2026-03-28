@@ -135,7 +135,7 @@ SOUNDS = {
     "leave": "Sounds/Leave.mp3",
     "yes": "Sounds/Yes.mp3",
     "no": "Sounds/No.mp3",
-    "laugh": "Sounds/Laugh.mp3",
+    "hohoho": "Sounds/Laugh.mp3",
     "ugh": "Sounds/Ugh.mp3",
     "ksi": "Sounds/KSI.mp3"
 }
@@ -173,6 +173,9 @@ async def leave(ctx):
     
     voice_client = ctx.guild.voice_client
     if voice_client:
+        if voice_client.is_playing():
+            voice_client.stop()
+
         voice_client.play(discord.FFmpegPCMAudio(SOUNDS["leave"]))
         while voice_client.is_playing():
             await asyncio.sleep(1)
@@ -190,48 +193,39 @@ async def ask(ctx, *, question: str):
     
     user_nickname = ctx.author.display_name
     tts_text = f"{user_nickname} asked: {question}"
-    response = random.choice(["yes", "no", "laugh", "ugh"])
+    response = random.choice(["yes", "no", "hohoho", "ugh"])
     response_audio_path = SOUNDS[response]
 
     voice_client = ctx.guild.voice_client
     if voice_client:
-        def cleanup(_):
-            
-            if text_to_speech:
+        if voice_client.is_playing():
+            voice_client.stop()
+
+        def play_response(_):
+            voice_client.play(discord.FFmpegPCMAudio(response_audio_path))
+
+        if text_to_speech:
+            with tempfile.NamedTemporaryFile(delete=False, suffix=".mp3") as tts_audio:
+                gTTS(tts_text, lang="en").save(tts_audio.name)
+                tts_filename = tts_audio.name
+
+            def play_response_after_tts(_):
                 try:
                     os.remove(tts_filename)
                 except Exception as e:
                     print(f"Error deleting TTS file: {e}")
+                play_response(None)
 
-        def play_response(_):
-            
             voice_client.play(
-                discord.FFmpegPCMAudio(response_audio_path),
-                after=None
+                discord.FFmpegPCMAudio(tts_filename),
+                after=play_response_after_tts
             )
-
-        if text_to_speech:
-            
-            with tempfile.NamedTemporaryFile(delete=False, suffix=".mp3") as tts_audio:
-                gTTS(tts_text, lang='en').save(tts_audio.name)
-                tts_filename = tts_audio.name
-
-            voice_client.play(
-    discord.FFmpegPCMAudio(
-        tts_filename 
-        #, options="-filter:a 'asetrate=44100*1.05,atempo=1.0'"
-        # first number after 40000: pitch | second number: speed
-    ),
-    after=play_response
-)
-
-
         else:
             play_response(None)
 
-        await ctx.reply(f"Ben says: {response.capitalize()}")
-        print(f"(!) - {user_nickname} asked: {question}")
-        print(f"(!) - Response: {response.capitalize()}")
+    await ctx.reply(f"Ben says: {response.capitalize()}")
+    print(f"(!) - {user_nickname} asked: {question}")
+    print(f"(!) - Response: {response.capitalize()}")
 
 
 
