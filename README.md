@@ -1,11 +1,18 @@
 # Talking Ben Bot
 
-Need help? Check out the video tutorial here: https://www.youtube.com/watch?v=Qa9Mj-qEtwk
+Need help? Check out the video tutorial here: https://www.youtube.com/watch?v=Qa9Mj-qEtwk **[NOTICE: This tutorial is outdated and will be updated soon.]**
 
-Made in Python.
+# Setup
+Ensure you have Python installed.
 
-## Setup
+Create a new Discord application with the following permissions: Connect, Read Message History, Send Messages, and Speak. Ensure that it also has the Message Content intent.
 
-Paste bot token into config.json and start using run.bat
+### Windows
+Run setup.bat to automatically download Python dependencies and the FFmpeg application.
 
-You can also run with ``python bot.py``
+A token.json file will be automatically generated. Replace PASTE_YOUR_BOT_TOKEN_HERE with your Discord bot token.
+
+Start the bot with run.bat or by running python bot.py.
+
+### Linux
+Linux setup instructions are coming soon.

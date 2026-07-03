@@ -10,15 +10,18 @@ import tempfile
 
 def load_token():
     try:
-        with open("config.json") as config_file:
+        with open("token.json") as config_file:
             config = json.load(config_file)
-            return config.get("token")
+            token = config.get("token", "").strip()
+            if token == "PASTE_YOUR_BOT_TOKEN_HERE":
+                return None
+            return token
     except FileNotFoundError:
         return None
 
 TOKEN = load_token() or os.getenv("token")
 if not TOKEN:
-    raise ValueError("No token found in config.json or environment variable.")
+    raise ValueError("No token found in token.json or environment variable.")
 
 
 intents = discord.Intents.all()
@@ -181,7 +184,7 @@ async def leave(ctx):
             await asyncio.sleep(1)
         await voice_client.disconnect()
         await ctx.send("Left the voice channel.")
-        print(f"(!) - Left channel")
+        print("(!) - Left channel")
     else:
         await ctx.send("I'm not in a voice channel.")
 
@@ -259,7 +262,7 @@ async def aski(ctx):
         "wheres my crown 👑 thats my bling 💎 always trouble when i reign 👊😈"
     )
     await ctx.reply(f"Ben says: {special_response}")
-    print(f"(!) - Played KSI response")
+    print("(!) - Played KSI response")
 
     if ctx.guild.voice_client:
         ctx.guild.voice_client.play(discord.FFmpegPCMAudio(SOUNDS["ksi"]))

@@ -1,8 +1,10 @@
 aiohttp
 aiosignal
 attrs
+audioop-lts; python_version>="3.13"
 cffi
-discord.py
+davey
+discord.py[voice]>=2.7.1
 frozenlist
 gtts
 multidict
